@@ -22,10 +22,10 @@ const logo = `
 func main() {
 	fmt.Printf(logo)
 	ldapServer := pflag.String("dc", "", "DC to connect to, use IP or full hostname example: -dc=\"dcip\"")
-	domain := pflag.StringP("domain", "d","", "domain example: -domain=\"redteam.lab\"")
-	user := pflag.StringP("username", "u", "","username to connect with example: -username=\"user1\"")
-	hash := pflag.StringP("hash", "H","", "hash to connect with example: -hash=\"32ed87bdb5fdc5e9cba88547376818d4\"")
-	pass := pflag.StringP("password", "p", "","password to connect with example: -password=\"pass1\"")
+	domain := pflag.StringP("domain", "d", "", "domain example: -domain=\"redteam.lab\"")
+	user := pflag.StringP("username", "u", "", "username to connect with example: -username=\"user1\"")
+	hash := pflag.StringP("hash", "H", "", "hash to connect with example: -hash=\"32ed87bdb5fdc5e9cba88547376818d4\"")
+	pass := pflag.StringP("password", "p", "", "password to connect with example: -password=\"pass1\"")
 	unsafe := pflag.Bool("unsafe", true, "Use account password link")
 	startTLS := pflag.Bool("startTLS", false, "Use for StartTLS on 389. Default is TLS on 636\n")
 	getPolicy := pflag.Bool("getPolicy", false, "get domain Policy")
@@ -58,7 +58,7 @@ func main() {
 	checkbackdoor := pflag.Bool("checkbackdoor", false, "check backdoor：MAQ、AsReproast、Kerberoast、SIDHistory、GetRBCD、UnconstrainedDeligation、ConstrainedDeligation、SensitiveDelegateAccount")
 	Krbtgttime := pflag.Bool("Krbtgttime", false, "get Krbtgt password last set time ")
 
-	pflag.CommandLine.SortFlags=false
+	pflag.CommandLine.SortFlags = false
 	pflag.Parse()
 
 	if len(*ldapServer) == 0 || len(*domain) == 0 || len(*user) == 0 {
@@ -74,16 +74,16 @@ func main() {
 	//*ldapServer, ldapIP = goddi.ValidateIPHostname(*ldapServer, *domain)
 
 	baseDN := "dc=" + strings.Replace(*domain, ".", ",dc=", -1)
-	GetSchemaNamingContextEntry :="CN=Schema,CN=Configuration,"+baseDN
-	GetConfigurationContextEntry :="CN=Configuration,"+baseDN
+	GetSchemaNamingContextEntry := "CN=Schema,CN=Configuration," + baseDN
+	GetConfigurationContextEntry := "CN=Configuration," + baseDN
 	username := *user + "@" + *domain
 	//username:=*user
 
 	var ishash bool
 	if len(*pass) == 0 {
-		username=*user
+		username = *user
 		ishash = true
-	}else {
+	} else {
 		username = *user + "@" + *domain
 		ishash = false
 	}
@@ -95,19 +95,19 @@ func main() {
 		LdapTLSPort: uint16(636),
 		User:        username,
 		Usergpp:     *user,
-		Hash:		 *hash,
+		Hash:        *hash,
 		Pass:        *pass,
 		Domain:      *domain,
 		Unsafe:      *unsafe,
 		StartTLS:    *startTLS}
 
-	goddi.Connect(li,ishash)
+	goddi.Connect(li, ishash)
 	//defer li.Conn.Close()
 	start := time.Now()
 
 	if (*getDCandExchangeDNS) == true {
-		goddi.GetDomainControllers(li.Conn, baseDN,li.Domain)
-		goddi.GetExchangeServer(li.Conn, GetConfigurationContextEntry,li.Domain)
+		goddi.GetDomainControllers(li.Conn, baseDN, li.Domain)
+		goddi.GetExchangeServer(li.Conn, GetConfigurationContextEntry, li.Domain)
 		//goddi.DC_and_Exchange_DNS(li.Conn, "DC="+*domain+",CN=MicrosoftDNS,DC=DomainDnsZones,"+baseDN)
 		stop := time.Since(start)
 		cwd := goddi.GetCWD()
@@ -143,13 +143,13 @@ func main() {
 		os.Exit(1)
 	}
 	if (*getExchangeInformation) == true {
-		goddi.GetExchangeServer(li.Conn, GetConfigurationContextEntry,li.Domain)
+		goddi.GetExchangeServer(li.Conn, GetConfigurationContextEntry, li.Domain)
 		stop := time.Since(start)
 		cwd := goddi.GetCWD()
 		fmt.Printf("[i] CSVs written to 'csv' directory in %s\n[i] Execution took %s\n", cwd, stop)
 		os.Exit(1)
 	}
-	if (*getmaq) == true{
+	if (*getmaq) == true {
 		goddi.GetMAQ(li.Conn, baseDN)
 		stop := time.Since(start)
 		cwd := goddi.GetCWD()
@@ -228,14 +228,14 @@ func main() {
 		os.Exit(1)
 	}
 	if (*getADCS) == true {
-		goddi.GETADCS(li.Conn, "CN=Public Key Services,CN=Services,CN=Configuration,"+baseDN,li.Domain)
+		goddi.GETADCS(li.Conn, "CN=Public Key Services,CN=Services,CN=Configuration,"+baseDN, li.Domain)
 		stop := time.Since(start)
 		cwd := goddi.GetCWD()
 		fmt.Printf("[i] CSVs written to 'csv' directory in %s\n[i] Execution took %s\n", cwd, stop)
 		os.Exit(1)
 	}
 	if (*getDC) == true {
-		goddi.GetDomainControllers(li.Conn, baseDN,li.Domain)
+		goddi.GetDomainControllers(li.Conn, baseDN, li.Domain)
 		stop := time.Since(start)
 		cwd := goddi.GetCWD()
 		fmt.Printf("[i] CSVs written to 'csv' directory in %s\n[i] Execution took %s\n", cwd, stop)
@@ -313,7 +313,7 @@ func main() {
 		fmt.Printf("[i] CSVs written to 'csv' directory in %s\n[i] Execution took %s\n", cwd, stop)
 		os.Exit(1)
 	}
-	if (*Krbtgttime) == true{
+	if (*Krbtgttime) == true {
 		goddi.Krbtgttime(li.Conn, baseDN)
 		stop := time.Since(start)
 		cwd := goddi.GetCWD()
@@ -324,9 +324,9 @@ func main() {
 	goddi.GetDomainSID(li.Conn, baseDN)
 	goddi.GetMAQ(li.Conn, baseDN)
 	goddi.GetDomainAccountPolicy(li.Conn, baseDN)
-	goddi.GetDomainControllers(li.Conn, baseDN,li.Domain)
-	goddi.GETADCS(li.Conn, "CN=Public Key Services,CN=Services,CN=Configuration,"+baseDN,*domain)
-	goddi.GetExchangeServer(li.Conn, GetConfigurationContextEntry,li.Domain)
+	goddi.GetDomainControllers(li.Conn, baseDN, li.Domain)
+	goddi.GETADCS(li.Conn, "CN=Public Key Services,CN=Services,CN=Configuration,"+baseDN, *domain)
+	goddi.GetExchangeServer(li.Conn, GetConfigurationContextEntry, li.Domain)
 	//goddi.DC_and_Exchange_DNS(li.Conn, "DC="+*domain+",CN=MicrosoftDNS,DC=DomainDnsZones,"+baseDN)
 	goddi.GetAllDNS(li.Conn, "DC="+*domain+",CN=MicrosoftDNS,DC=DomainDnsZones,"+baseDN)
 	goddi.GetDomainTrusts(li.Conn, baseDN)
