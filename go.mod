@@ -1,4 +1,4 @@
-module example.com/goddi
+module github.com/No-Github/Adinfo
 
 go 1.17
 
