@@ -1,7 +1,7 @@
 package main
 
 import (
-	goddi "example.com/goddi/ddi"
+	goddi "github.com/No-Github/Adinfo/ddi"
 	"fmt"
 	"github.com/spf13/pflag"
 	"os"
